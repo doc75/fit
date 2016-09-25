@@ -1,8 +1,24 @@
 $LOAD_PATH << './lib'
 require 'fit'
+require 'pathname'
 require 'table_print'
 
-fit_file = Fit.load_file(ARGV[0])
+offset = { '2016-09-25_09-18-00_4_15.fit' => [1802565,843722280],
+           '2016-09-20_12-31-00_4_13.fit' => [1382103, 843301860], 
+           '2016-09-15_12-45-00_4_11.fit' => [950957, 842870700] }
+
+filepath = ARGV[0]
+filename = Pathname.new(filepath).basename
+
+start_time = nil
+real_start_time = nil
+
+if offset.has_key? filename.to_s
+  start_time = offset[filename.to_s][0]
+  real_start_time = offset[filename.to_s][1]
+end
+
+fit_file = Fit.load_file(ARGV[0], start_time, real_start_time)
 
 records = fit_file.records.select{ |r| r.content.record_type != :definition }.map{ |r| r.content }
 output = {}
