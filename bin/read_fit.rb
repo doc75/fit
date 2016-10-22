@@ -3,24 +3,26 @@ require 'fit'
 require 'pathname'
 require 'table_print'
 
-offset = { '1990-01-08_14-52-13_4_11.fit' => [738748, 789127828],
-           '1990-01-10_15-22-46_4_13.fit' => [913451, 789302531],
-           '2016-09-25_09-18-00_4_15.fit' => [1802565, 843722280],
-           '2016-09-20_12-31-00_4_13.fit' => [1382103, 843301860], 
-           '2016-09-15_12-45-00_4_11.fit' => [950957, 842870700] }
+def get_offset(filename)
+  offset = nil
 
-filepath = ARGV[0]
-filename = Pathname.new(filepath).basename
+  fit_file = Fit.load_file(filename)
 
-start_time = nil
-real_start_time = nil
-
-if offset.has_key? filename.to_s
-  start_time = offset[filename.to_s][0]
-  real_start_time = offset[filename.to_s][1]
+  records = fit_file.records.select{ |r| r.content.record_type == :activity }.map{ |r| r.content }
+  rec = records[0]
+  local_ts = rec.send(:raw_timestamp).to_i
+  if local_ts < "0x10000000".hex
+    offset = rec.send(:raw_local_timestamp).to_i
+  end
+ 
+  offset
 end
 
-fit_file = Fit.load_file(ARGV[0], start_time, real_start_time)
+filepath = ARGV[0]
+
+offset = get_offset(filepath)
+
+fit_file = Fit.load_file(filepath, offset)
 
 records = fit_file.records.select{ |r| r.content.record_type != :definition }.map{ |r| r.content }
 output = {}

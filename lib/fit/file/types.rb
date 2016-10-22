@@ -3,16 +3,14 @@ module Fit
     module Types
 
       @@types = {}
-      @@start_time = nil
-      @@real_start_time = nil
+      @@time_offset = nil
       class << self
         def add_type(name, type, option = {})
           @@types[name] = option.merge({:basic_type => type})
         end
 
-        def set_start_time(start_time, real_start_time)
-          @@start_time = start_time
-          @@real_start_time = real_start_time
+        def set_time_offset(time_offset)
+          @@time_offset = time_offset
         end
 
         def get_type_definition(name)
@@ -23,8 +21,8 @@ module Fit
         def date_time_value(time, values, parameters)
           val = values.invert
           if time < val['min']
-            if @@start_time
-              res = @@real_start_time - @@start_time + time
+            if @@time_offset
+              res = @@time_offset + time
               res2 = parameters[:utc] ? Time.utc(1989,12,31) + res : Time.local(1989,12,31) + res
               res2.to_s
             else

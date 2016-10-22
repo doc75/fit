@@ -16,8 +16,8 @@ require 'fit/version'
 
 module Fit
 
-  def self.load_file(path, start_date = nil, real_start_date = nil)
-    Fit::File::Types.set_start_time(start_date, real_start_date)
+  def self.load_file(path, time_offset = nil)
+    Fit::File::Types.set_time_offset(time_offset)
     File.read ::File.open(path)
   end
 
