@@ -26,6 +26,7 @@ end
 ARGV.each do |arg|
   filepath = arg
   path = Pathname.new(filepath)
+  puts "Checking date of #{path.basename}"
 
   offset = get_file_date(filepath)
   if offset
