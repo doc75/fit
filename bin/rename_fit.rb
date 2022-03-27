@@ -37,7 +37,6 @@ def get_move_to_do(filepath)
   end
   offset = get_file_date(filepath)
   if offset
-    res = /(_\d+_\d+\.fit)$/.match(filepath)
     str = format('%<year>04d-%<month>02d-%<day>02d_%<hour>02d-%<min>02d-%<sec>02d',
                  year: offset.year,
                  month: offset.month,
@@ -45,7 +44,8 @@ def get_move_to_do(filepath)
                  hour: offset.hour,
                  min: offset.min,
                  sec: offset.sec)
-    new_name = str + res.to_s
+    new_name = str + /(_\d+_\d+\.fit)$/.match(filepath).to_s
+
     if path.basename.to_s != new_name
       res = "fossil mv #{path.basename} #{new_name}"
       puts " to be renamed to #{new_name}" if DEBUG
