@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'bindata', '~> 2.4'
+  spec.add_dependency 'concurrent-ruby', '1.3.4'
   spec.add_dependency 'activesupport', '~> 6.1'
 
   spec.add_development_dependency 'bundler', '~> 2.1'
